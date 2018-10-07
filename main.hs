@@ -1,20 +1,28 @@
 import System.IO
 
-initBoard = [[0,0,0],
-             [4,0,0],
-             [0,2,0]]
+data Tile = Number Int | Empty deriving (Eq, Show)
+type Board = [[Tile]]
 
-strelems lst = [ (show x)++"" | x<-lst]
-printBoard b = mapM_ putStrLn (strelems initBoard)
+initBoard :: Board
+initBoard = [[Number 2, Empty, Empty],
+             [Number 2, Empty, Empty],
+             [Empty, Empty, Empty]]
+
+
+insertTileToRow [] = ([], False)
+insertTileToRow (h:t) = if(h==Empty) then ((Number 2:t), True) else (\ (lst,bool) -> (h:lst,bool)) $ insertTileToRow t
+
+strelems lst = [show row | row<-lst]
+printBoard b = mapM_ putStrLn (strelems b)
 
 --play :: [[Num]] -> IO [[Num]]
-play board = do
-    putStrLn "Want to play 2048?"
-    ans <- getLine
-    if(ans `elem` ["yes", "y"])
-        then 
-            printBoard board
-        else 
-            return board
-
-go = play ()
+-- play board = do
+--     putStrLn "Want to play 2048?"
+--     ans <- getLine
+--     if(ans `elem` ["yes", "y"])
+--         then 
+--             printBoard initBoard
+--         else 
+--             return board
+--
+-- go = play ()
