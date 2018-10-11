@@ -6,10 +6,10 @@ module Mockboard (initialBoard, boardSize, Row, Tile) where
 
   initialBoard :: Board
   initialBoard = 
-    [[0,0,0,0],
-     [0,0,0,0],
-     [0,0,2,0],
-     [0,0,0,0]]
+    [[32,0,0,0],
+     [0,0,64,0],
+     [0,8,2,0],
+     [0,0,4,2]]
 
   boardSize :: Float
   boardSize = foldl (\acc x -> 1 + acc) 0 initialBoard
