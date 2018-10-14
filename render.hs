@@ -1,6 +1,6 @@
 import Graphics.Gloss
 import Graphics.Gloss.Interface.Pure.Game -- for Event
-import Mockboard
+import GameBoard
 
 window_size :: Float
 window_size = 296 * 2

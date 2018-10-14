@@ -1,4 +1,4 @@
-module Mockboard (initialBoard, board2048, changedBoard, changedBoard2,
+module GameBoard (initialBoard, board2048, changedBoard, changedBoard2,
                   initialGame, game2048, gameState1, gameState2,
                   Board, Row, Tile, Index,
                   boardSize,
