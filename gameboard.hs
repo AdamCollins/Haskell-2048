@@ -1,8 +1,8 @@
-module GameBoard (initialBoard, board2048, changedBoard, changedBoard2,
+module GameBoard (initialBoard, board2048, changedBoard, changedBoard2, gameOverBoard,
                   initialGame, game2048, gameState1, gameState2,
                   Board, Row, Tile, Index,
                   boardSize,
-                  GameState(..)
+                  IsGameOver(..), GameState(..)
                   ) where
 
   type Tile = Int
@@ -10,7 +10,7 @@ module GameBoard (initialBoard, board2048, changedBoard, changedBoard2,
   type Board = [Row]
   type Index = Float
 
-  data IsGameOver = No | Yes
+  data IsGameOver = InProgress | GameOver deriving (Eq)
   data GameState = GameState {
     board :: Board,
     status :: IsGameOver
@@ -26,7 +26,7 @@ module GameBoard (initialBoard, board2048, changedBoard, changedBoard2,
 
   initialGame = GameState {
     board = initialBoard,
-    status = No
+    status = InProgress
   }
   initialBoard = 
     [[32,0,0,0],
@@ -37,7 +37,7 @@ module GameBoard (initialBoard, board2048, changedBoard, changedBoard2,
 
   game2048 = GameState {
     board = board2048,
-    status = No
+    status = InProgress
   }
   board2048 =
     [[2048, 1024, 512, 128],
@@ -48,7 +48,7 @@ module GameBoard (initialBoard, board2048, changedBoard, changedBoard2,
 
   gameState1 = GameState {
       board = changedBoard,
-      status = No
+      status = InProgress
   }
   changedBoard = 
     [[2,2,2,2],
@@ -59,13 +59,19 @@ module GameBoard (initialBoard, board2048, changedBoard, changedBoard2,
 
   gameState2 = GameState {
       board = changedBoard2,
-      status = No
+      status = InProgress
   }
   changedBoard2 = 
     [[0,0,0,0],
      [0,0,0,0],
      [64,64,64,64],
      [32,32,32,32]]
+
+
+  gameOverBoard = GameState {
+      board = initialBoard,
+      status = GameOver
+  }
 
   boardSize :: Float
   boardSize = foldl (\acc x -> 1 + acc) 0 initialBoard

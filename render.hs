@@ -27,15 +27,20 @@ drawRow row index =
   translate 0 (1/2 * window_size - edge_size * (index + 1) - square_size * index - 1/2 * square_size) $ 
     pictures [drawSquare tile tindex | (tile, tindex) <- zip row [0..squares_per_row - 1]]
 
+drawGameOver :: Picture
+drawGameOver = rectangleSolid 300 300
+
 drawing :: GameState -> Picture
-drawing gameState = pictures [drawRow row index | 
-                    (row, index) <- zip (board gameState) [0..squares_per_row - 1]]
+drawing gameState = pictures $ 
+                    [drawRow row index | (row, index) <- zip (board gameState) [0..squares_per_row - 1]] ++
+                    gameOverDisplay
+  where gameOverDisplay = [drawGameOver | status gameState == GameOver]
 
 handleKeys :: Event -> GameState -> GameState
 handleKeys (EventKey (SpecialKey KeyLeft) Down _ _) gs = gameState1 -- to be replaced
 handleKeys (EventKey (SpecialKey KeyRight) Down _ _) gs = gameState2 -- to be replaced
 handleKeys (EventKey (SpecialKey KeyUp) Down _ _) gs = gameState1 -- to be replaced
-handleKeys (EventKey (SpecialKey KeyDown) Down _ _) gs = gameState2 -- to be replaced
+handleKeys (EventKey (SpecialKey KeyDown) Down _ _) gs = gameOverBoard -- to be replaced
 handleKeys _ gs = gs
 
 ---- main functions ----
