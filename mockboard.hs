@@ -1,5 +1,5 @@
 module Mockboard (initialBoard, board2048, changedBoard,
-                  Row, Tile, Index) where
+                  Board, Row, Tile, Index) where
 
   type Tile = Int
   type Row = [Tile]

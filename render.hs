@@ -1,4 +1,5 @@
 import Graphics.Gloss
+import Graphics.Gloss.Interface.Pure.Game -- for Event
 import Mockboard
 
 window_size :: Float
@@ -16,7 +17,7 @@ background :: Color
 background = makeColorI 187 173 160 255
 
 window :: Display
-window = InWindow "Static 2048 Board" (round window_size, round window_size) (10, 10)
+window = InWindow "2048" (round window_size, round window_size) (10, 10)
 
 drawSquare :: Tile -> Index -> Picture
 drawSquare tile index = 
@@ -28,11 +29,25 @@ drawRow row index =
   translate 0 (1/2 * window_size - edge_size * (index + 1) - square_size * index - 1/2 * square_size) $ 
     pictures [drawSquare tile tindex | (tile, tindex) <- zip row [0..squares_per_row - 1]]
 
-drawing :: Picture
-drawing = pictures [drawRow row index | (row, index) <- zip initBoard [0..squares_per_row - 1]]
+drawing :: Board -> Picture
+drawing initboard = pictures [drawRow row index | (row, index) <- zip initboard [0..squares_per_row - 1]]
 
-main :: IO ()
-main = display window background drawing
+handleKeys :: Event -> Board -> Board
+handleKeys (EventKey (SpecialKey KeyLeft) Down _ _) b = changedBoard -- to be replaced
+handleKeys (EventKey (SpecialKey KeyRight) Down _ _) s = changedBoard -- to be replaced
+handleKeys (EventKey (SpecialKey KeyUp) Down _ _) s = changedBoard -- to be replaced
+handleKeys (EventKey (SpecialKey KeyDown) Up _ _) s = changedBoard -- to be replaced
+handleKeys _ b = b
+
+---- main functions ----
+mainStatic :: IO ()
+mainStatic = display window background (drawing initBoard)
+
+-- Number of simulation steps to take for each second of real time
+simsteps = 1
+
+main :: IO()
+main = play window background simsteps initBoard drawing handleKeys (flip const)
 
 
 ---- Util ----
