@@ -43,16 +43,6 @@ handleKeys (EventKey (SpecialKey KeyUp) Down _ _) gs = gameState1 -- to be repla
 handleKeys (EventKey (SpecialKey KeyDown) Down _ _) gs = gameOverBoard -- to be replaced
 handleKeys _ gs = gs
 
----- main functions ----
-mainstatic :: IO ()
-mainstatic = display window background (drawing initialGame)
-
--- Number of simulation steps to take for each second of real time
-simsteps = 1
-
-main :: IO()
-main = play window background simsteps initialGame drawing handleKeys (flip const)
-
 tileColor :: Tile -> Color
 tileColor tile = case tile of
                    0     -> makeColorI 205 192 180 255
@@ -68,3 +58,19 @@ tileColor tile = case tile of
                    1024  -> makeColorI 237 197 63 255
                    2048  -> makeColorI 237 194 46 255
                    _     -> makeColorI 238 228 218 90
+
+---- main functions ----
+mainstatic :: IO ()
+mainstatic = display window background (drawing initialGame)
+
+-- Number of simulation steps to take for each second of real time
+simsteps = 1
+
+main :: IO()
+main = play window background simsteps initialGame drawing handleKeys (flip const)
+
+-- main :: t0 -> IO()
+-- main gameState = play window background simsteps gs drawing handleKeys (flip const)
+
+-- maininit :: IO()
+-- maininit = main initialGame
