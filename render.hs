@@ -1,5 +1,6 @@
 import Graphics.Gloss
-import Mockboard
+import Graphics.Gloss.Interface.Pure.Game -- for Event
+import GameBoard
 
 window_size :: Float
 window_size = 296 * 2
@@ -10,13 +11,11 @@ square_to_edge_ratio = 7.6
 edge_size = window_size / (numof_edges + squares_per_row * square_to_edge_ratio)
 square_size = edge_size * square_to_edge_ratio
 
-initBoard = initialBoard
-
 background :: Color
 background = makeColorI 187 173 160 255
 
 window :: Display
-window = InWindow "Static 2048 Board" (round window_size, round window_size) (10, 10)
+window = InWindow "2048" (round window_size, round window_size) (10, 10)
 
 drawSquare :: Tile -> Index -> Picture
 drawSquare tile index = 
@@ -28,16 +27,21 @@ drawRow row index =
   translate 0 (1/2 * window_size - edge_size * (index + 1) - square_size * index - 1/2 * square_size) $ 
     pictures [drawSquare tile tindex | (tile, tindex) <- zip row [0..squares_per_row - 1]]
 
-drawing :: Picture
-drawing = pictures [drawRow row index | (row, index) <- zip initBoard [0..squares_per_row - 1]]
+drawGameOver :: Picture
+drawGameOver = rectangleSolid 300 300
 
-main :: IO ()
-main = display window background drawing
+drawing :: GameState -> Picture
+drawing gameState = pictures $ 
+                    [drawRow row index | (row, index) <- zip (board gameState) [0..squares_per_row - 1]] ++
+                    gameOverDisplay
+  where gameOverDisplay = [drawGameOver | status gameState == GameOver]
 
-
----- Util ----
-boardSize :: Float
-boardSize = foldl (\acc x -> 1 + acc) 0 initBoard
+handleKeys :: Event -> GameState -> GameState
+handleKeys (EventKey (SpecialKey KeyLeft) Down _ _) gs = gameState1 -- to be replaced
+handleKeys (EventKey (SpecialKey KeyRight) Down _ _) gs = gameState2 -- to be replaced
+handleKeys (EventKey (SpecialKey KeyUp) Down _ _) gs = gameState1 -- to be replaced
+handleKeys (EventKey (SpecialKey KeyDown) Down _ _) gs = gameOverBoard -- to be replaced
+handleKeys _ gs = gs
 
 tileColor :: Tile -> Color
 tileColor tile = case tile of
@@ -54,3 +58,19 @@ tileColor tile = case tile of
                    1024  -> makeColorI 237 197 63 255
                    2048  -> makeColorI 237 194 46 255
                    _     -> makeColorI 238 228 218 90
+
+---- main functions ----
+mainstatic :: IO ()
+mainstatic = display window background (drawing initialGame)
+
+-- Number of simulation steps to take for each second of real time
+simsteps = 1
+
+main :: IO()
+main = play window background simsteps initialGame drawing handleKeys (flip const)
+
+-- main :: t0 -> IO()
+-- main gameState = play window background simsteps gs drawing handleKeys (flip const)
+
+-- maininit :: IO()
+-- maininit = main initialGame
