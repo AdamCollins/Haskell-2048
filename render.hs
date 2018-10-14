@@ -11,8 +11,6 @@ square_to_edge_ratio = 7.6
 edge_size = window_size / (numof_edges + squares_per_row * square_to_edge_ratio)
 square_size = edge_size * square_to_edge_ratio
 
-initBoard = initialBoard
-
 background :: Color
 background = makeColorI 187 173 160 255
 
@@ -29,30 +27,26 @@ drawRow row index =
   translate 0 (1/2 * window_size - edge_size * (index + 1) - square_size * index - 1/2 * square_size) $ 
     pictures [drawSquare tile tindex | (tile, tindex) <- zip row [0..squares_per_row - 1]]
 
-drawing :: Board -> Picture
-drawing initboard = pictures [drawRow row index | (row, index) <- zip initboard [0..squares_per_row - 1]]
+drawing :: GameState -> Picture
+drawing gameState = pictures [drawRow row index | 
+                    (row, index) <- zip (board gameState) [0..squares_per_row - 1]]
 
-handleKeys :: Event -> Board -> Board
-handleKeys (EventKey (SpecialKey KeyLeft) Down _ _) b = changedBoard -- to be replaced
-handleKeys (EventKey (SpecialKey KeyRight) Down _ _) s = changedBoard -- to be replaced
-handleKeys (EventKey (SpecialKey KeyUp) Down _ _) s = changedBoard -- to be replaced
-handleKeys (EventKey (SpecialKey KeyDown) Up _ _) s = changedBoard -- to be replaced
-handleKeys _ b = b
+handleKeys :: Event -> GameState -> GameState
+handleKeys (EventKey (SpecialKey KeyLeft) Down _ _) gs = gameState1 -- to be replaced
+handleKeys (EventKey (SpecialKey KeyRight) Down _ _) gs = gameState2 -- to be replaced
+handleKeys (EventKey (SpecialKey KeyUp) Down _ _) gs = gameState1 -- to be replaced
+handleKeys (EventKey (SpecialKey KeyDown) Down _ _) gs = gameState2 -- to be replaced
+handleKeys _ gs = gs
 
 ---- main functions ----
-mainStatic :: IO ()
-mainStatic = display window background (drawing initBoard)
+mainstatic :: IO ()
+mainstatic = display window background (drawing initialGame)
 
 -- Number of simulation steps to take for each second of real time
 simsteps = 1
 
 main :: IO()
-main = play window background simsteps initBoard drawing handleKeys (flip const)
-
-
----- Util ----
-boardSize :: Float
-boardSize = foldl (\acc x -> 1 + acc) 0 initBoard
+main = play window background simsteps initialGame drawing handleKeys (flip const)
 
 tileColor :: Tile -> Color
 tileColor tile = case tile of
