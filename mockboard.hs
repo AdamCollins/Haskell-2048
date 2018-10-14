@@ -1,18 +1,24 @@
-module Mockboard (initialBoard, boardSize, Row, Tile) where
+module Mockboard (initialBoard, board2048, changedBoard,
+                  Row, Tile, Index) where
 
-  type Board = [[Int]]
-  type Row = [Int]
   type Tile = Int
+  type Row = [Tile]
+  type Board = [Row]
+  type Index = Float
 
-  initialBoard :: Board
+  initialBoard, board2048, changedBoard :: Board
+
   initialBoard = 
     [[32,0,0,0],
      [0,0,64,0],
      [0,8,2,0],
      [0,0,4,2]]
 
-  boardSize :: Float
-  boardSize = foldl (\acc x -> 1 + acc) 0 initialBoard
+  board2048 =
+    [[2048, 1024, 512, 128],
+     [64, 32, 16, 8],
+     [4, 2, 0, 0],
+     [0, 0, 0, 0]]
 
   changedBoard = 
     [[0,2,0,0],
