@@ -30,6 +30,24 @@ module Board (initBoard, insertTile, rotate) where
     isRowEmpty :: Row -> Bool 
     isRowEmpty (h:t) = foldr (\ h b -> h==0&&b) True (h:t) 
 
+    sumRows r1 r2 = zipWith (+) r1 r2
+    --Returns true if the two rows can be added together legally
+    rowsCanMerge [] [] = True
+    rowsCanMerge (e1:r1) (e2:r2) 
+                            | (e1==e2 || e1==0 || e2==0) = rowsCanMerge r1 r2
+                            | otherwise = False
+
+    --Shift all rows down while merging matching rows
+    shiftRowDown :: Board -> Board                        
+    shiftRowDown [] = []
+    shiftRowDown (row : board)
+                            | length board == 0 = [row]
+                            | rowsCanMerge row (board!!0) = emptyRow:(shiftRowDown (mergedRow:boardEnd)) -- [0,0,0] : ([r1.a+r2.a, r1.b+r2.b...] :[r3])
+                            | otherwise = row : shiftRowDown board
+                            where emptyRow = [0,0,0]
+                                  mergedRow = sumRows row (board!!0)
+                                  boardEnd = drop 1 board
+
 
     --Prints Board in the console
     printBoard :: Show a => [a] -> IO ()
