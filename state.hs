@@ -1,9 +1,10 @@
 module State (initialBoard, board2048, changedBoard, changedBoard2, gameOverBoard, winBoard,
-                  initialGame, game2048, gameState1, gameState2, shiftUp, shiftDown, shiftLeft, shiftRight,
-                  Board, Row, Tile, Index,
-                  boardSize,
-                  IsGameOver(..), GameState(..)
-                  ) where
+              initialGame, game2048, gameState1, gameState2, shiftUp, shiftDown, shiftLeft, shiftRight,
+              Board, Row, Tile, Index,
+              boardSize,
+              IsGameOver(..), GameState(..)
+             ) where
+
   import Board;
   type Tile = Int
   type Row = [Tile]
