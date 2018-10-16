@@ -1,6 +1,6 @@
 import Graphics.Gloss
 import Graphics.Gloss.Interface.Pure.Game -- for Event
-import GameBoard
+import State
 
 window_size :: Float
 window_size = 296 * 2
@@ -37,10 +37,10 @@ drawing gameState = pictures $
   where gameOverDisplay = [drawGameOver | status gameState == GameOver]
 
 handleKeys :: Event -> GameState -> GameState
-handleKeys (EventKey (SpecialKey KeyLeft) Down _ _) gs = gameState1 -- to be replaced
-handleKeys (EventKey (SpecialKey KeyRight) Down _ _) gs = gameState2 -- to be replaced
-handleKeys (EventKey (SpecialKey KeyUp) Down _ _) gs = gameState1 -- to be replaced
-handleKeys (EventKey (SpecialKey KeyDown) Down _ _) gs = gameOverBoard -- to be replaced
+handleKeys (EventKey (SpecialKey KeyLeft) Down _ _) gs = shiftLeft gs -- to be replaced
+handleKeys (EventKey (SpecialKey KeyRight) Down _ _) gs = shiftRight gs -- to be replaced
+handleKeys (EventKey (SpecialKey KeyUp) Down _ _) gs = shiftUp gs -- to be replaced
+handleKeys (EventKey (SpecialKey KeyDown) Down _ _) gs = shiftDown gs -- to be replaced
 handleKeys _ gs = gs
 
 tileColor :: Tile -> Color

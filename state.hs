@@ -1,10 +1,10 @@
-module GameBoard (initialBoard, board2048, changedBoard, changedBoard2, gameOverBoard,
-                  initialGame, game2048, gameState1, gameState2,
+module State (initialBoard, board2048, changedBoard, changedBoard2, gameOverBoard,
+                  initialGame, game2048, gameState1, gameState2, shiftUp, shiftDown, shiftLeft, shiftRight,
                   Board, Row, Tile, Index,
                   boardSize,
                   IsGameOver(..), GameState(..)
                   ) where
-
+  import Board;
   type Tile = Int
   type Row = [Tile]
   type Board = [Row]
@@ -15,6 +15,29 @@ module GameBoard (initialBoard, board2048, changedBoard, changedBoard2, gameOver
     board :: Board,
     status :: IsGameOver
   }
+  shiftUp :: GameState -> GameState
+  shiftUp gs = GameState {
+    board = shiftRows "up" (board gs),
+    status = InProgress
+  }
+    
+  shiftDown :: GameState -> GameState
+  shiftDown gs = GameState {
+    board = shiftRows "down" (board gs),
+    status = InProgress
+  }
+
+  shiftLeft :: GameState -> GameState
+  shiftLeft gs = GameState {
+    board = shiftRows "left" (board gs),
+    status = InProgress
+  }
+
+  shiftRight :: GameState -> GameState
+  shiftRight gs = GameState {
+    board = shiftRows "right" (board gs),
+    status = InProgress
+  }
 
   -- we may also need for the demo
   -- a one step away from gameover board
@@ -24,15 +47,15 @@ module GameBoard (initialBoard, board2048, changedBoard, changedBoard2, gameOver
   initialBoard, board2048, changedBoard :: Board
   initialGame, game2048, gameState1 :: GameState
 
+  initialBoard = [[2, 0, 0, 0],
+                 [2, 2, 2, 0],
+                 [0, 0, 4, 0],
+                 [0, 0, 0, 0]]
+
   initialGame = GameState {
     board = initialBoard,
     status = InProgress
   }
-  initialBoard = 
-    [[32,0,0,0],
-     [0,0,64,0],
-     [0,8,2,0],
-     [0,0,4,2]]
 
 
   game2048 = GameState {

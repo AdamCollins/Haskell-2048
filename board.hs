@@ -1,14 +1,11 @@
-module Board (initBoard, insertTile, rotate) where
+module Board (insertTile, rotate, shiftRows) where
     import System.IO
     import Data.List
     type Tile = Int
     type Row = [Tile]
     type Board = [[Tile]]
 
-    initBoard :: Board
-    initBoard = [[2, 0, 0],
-                [2, 0, 0],
-                [0, 0, 0]]
+
 
      -- Inserts a new tile into the board at an 0 location
     insertTile :: Board -> Board
@@ -19,8 +16,13 @@ module Board (initBoard, insertTile, rotate) where
     insertTileToRow :: Row -> (Row, Bool)
     insertTileToRow [] = ([], False)
     insertTileToRow (h:t) = if(h==0) then ((2:t), True) else (\ (lst,bool) -> (h:lst,bool)) $ insertTileToRow t 
+
+    flipdir dir 
+                | dir=="left" = "right" 
+                | dir=="right"="left" 
+                | otherwise = dir  
     
-    rotate :: [Char] -> Board -> Board  
+    rotate :: [Char] -> Board -> Board
     rotate dir board 
                     | dir=="left" = reverse $ transpose board
                     | dir== "right" = transpose $ reverse board
@@ -32,10 +34,15 @@ module Board (initBoard, insertTile, rotate) where
 
     sumRows r1 r2 = zipWith (+) r1 r2
     --Returns true if the two rows can be added together legally
-    rowsCanMerge [] [] = True
+    rowsCanMerge :: Row->Row->Bool
+    rowsCanMerge [] _ = True
+    rowsCanMerge _ [] = True
     rowsCanMerge (e1:r1) (e2:r2) 
                             | (e1==e2 || e1==0 || e2==0) = rowsCanMerge r1 r2
                             | otherwise = False
+    
+    shiftRows :: [Char]->Board->Board 
+    shiftRows dir board = insertTile $ rotate (flipdir dir) $ shiftRowDown (rotate dir board)
 
     --Shift all rows down while merging matching rows
     shiftRowDown :: Board -> Board                        
@@ -44,7 +51,7 @@ module Board (initBoard, insertTile, rotate) where
                             | length board == 0 = [row]
                             | rowsCanMerge row (board!!0) = emptyRow:(shiftRowDown (mergedRow:boardEnd)) -- [0,0,0] : ([r1.a+r2.a, r1.b+r2.b...] :[r3])
                             | otherwise = row : shiftRowDown board
-                            where emptyRow = [0,0,0]
+                            where emptyRow = [0,0,0,0]
                                   mergedRow = sumRows row (board!!0)
                                   boardEnd = drop 1 board
 
