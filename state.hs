@@ -1,4 +1,4 @@
-module State (initialBoard, board2048, changedBoard, changedBoard2, gameOverBoard,
+module State (initialBoard, board2048, changedBoard, changedBoard2, gameOverBoard, winBoard,
                   initialGame, game2048, gameState1, gameState2, shiftUp, shiftDown, shiftLeft, shiftRight,
                   Board, Row, Tile, Index,
                   boardSize,
@@ -10,11 +10,12 @@ module State (initialBoard, board2048, changedBoard, changedBoard2, gameOverBoar
   type Board = [Row]
   type Index = Float
 
-  data IsGameOver = InProgress | GameOver deriving (Eq)
+  data IsGameOver = InProgress | Win | Lose deriving (Eq)
   data GameState = GameState {
     board :: Board,
     status :: IsGameOver
   }
+
   shiftUp :: GameState -> GameState
   shiftUp gs = GameState {
     board = shiftRows "up" (board gs),
@@ -74,10 +75,10 @@ module State (initialBoard, board2048, changedBoard, changedBoard2, gameOverBoar
       status = InProgress
   }
   changedBoard = 
-    [[2,2,2,2],
-     [4,4,4,4],
-     [0,0,0,0],
-     [0,0,0,0]]
+    [[2, 2, 2, 2],
+     [4, 4, 4, 4],
+     [0, 0, 0, 0],
+     [0, 0, 0, 0]]
 
 
   gameState2 = GameState {
@@ -85,15 +86,20 @@ module State (initialBoard, board2048, changedBoard, changedBoard2, gameOverBoar
       status = InProgress
   }
   changedBoard2 = 
-    [[0,0,0,0],
-     [0,0,0,0],
-     [64,64,64,64],
-     [32,32,32,32]]
+    [[0, 0, 0, 0],
+     [0, 0, 0, 0],
+     [64, 64, 64, 64],
+     [32, 32, 32, 32]]
 
 
   gameOverBoard = GameState {
       board = initialBoard,
-      status = GameOver
+      status = Lose
+  }
+
+  winBoard = GameState {
+    board = board2048,
+    status = Win
   }
 
   boardSize :: Float

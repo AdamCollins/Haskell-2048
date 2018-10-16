@@ -30,17 +30,23 @@ drawRow row index =
 drawGameOver :: Picture
 drawGameOver = rectangleSolid 300 300
 
+drawWin :: Picture
+drawWin = Circle 200
+
 drawing :: GameState -> Picture
 drawing gameState = pictures $ 
-                    [drawRow row index | (row, index) <- zip (board gameState) [0..squares_per_row - 1]] ++
-                    gameOverDisplay
-  where gameOverDisplay = [drawGameOver | status gameState == GameOver]
+                    [drawRow row index | (row, index) <- zip (board gameState) [0..squares_per_row - 1]]
+                    ++ gameOverDisplay ++ winDisplay
+  where gameOverDisplay = [drawGameOver | status gameState == Lose]
+        winDisplay = [drawWin | status gameState == Win]
 
 handleKeys :: Event -> GameState -> GameState
-handleKeys (EventKey (SpecialKey KeyLeft) Down _ _) gs = shiftLeft gs -- to be replaced
-handleKeys (EventKey (SpecialKey KeyRight) Down _ _) gs = shiftRight gs -- to be replaced
-handleKeys (EventKey (SpecialKey KeyUp) Down _ _) gs = shiftUp gs -- to be replaced
-handleKeys (EventKey (SpecialKey KeyDown) Down _ _) gs = shiftDown gs -- to be replaced
+handleKeys (EventKey (SpecialKey KeyLeft) Down _ _) gs = shiftLeft gs
+handleKeys (EventKey (SpecialKey KeyRight) Down _ _) gs = shiftRight gs
+handleKeys (EventKey (SpecialKey KeyUp) Down _ _) gs = shiftUp gs
+handleKeys (EventKey (SpecialKey KeyDown) Down _ _) gs = shiftDown gs
+-- a special key to test win/lose display; to be deleted
+handleKeys (EventKey (Char 'a') Down _ _) s = winBoard
 handleKeys _ gs = gs
 
 tileColor :: Tile -> Color
