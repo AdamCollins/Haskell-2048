@@ -7,6 +7,7 @@ module Render (windowIO, background, drawing, handleKeys) where
   squares_per_row = boardSize
   numof_edges = squares_per_row + 1
   square_to_edge_ratio = 7.6
+  scale_factor = 2600
 
   background :: Color
   background = makeColorI 187 173 160 255
@@ -26,14 +27,35 @@ module Render (windowIO, background, drawing, handleKeys) where
     edge_size <- edge_sizeIO
     return ( edge_size * square_to_edge_ratio )
 
+  posToLeft :: String -> Float
+  posToLeft tile = case move of
+                    4 -> 3.8
+                    3 -> 5
+                    2 -> 8
+                    1 -> 15
+                  where move = foldl (\acc x -> 1 + acc) 0 tile
+
+  tileValueIO :: Tile -> Reader Float [Picture]
+  tileValueIO tile = do
+    window_size <- ask
+    square_size <- square_sizeIO
+    let amount = window_size / scale_factor
+    let posx = posToLeft $ show tile
+    let tileValue = if tile == 0 
+                    then [] 
+                    else [translate (- square_size / posx) (- square_size / 10) $ 
+                          Scale amount amount $ color black $ text $ show tile]
+    return tileValue
+
   drawSquareIO :: Tile -> Index -> Reader Float Picture
   drawSquareIO tile index = do
     window_size <- ask
     edge_size <- edge_sizeIO
     square_size <- square_sizeIO
+    tileValue <- tileValueIO tile
     return (
       translate (-1/2 * window_size + edge_size * (index + 1) + square_size * index + 1/2 * square_size) 0 $ 
-      color (tileColor tile) $ rectangleSolid square_size square_size
+      color (tileColor tile) $ pictures $ [rectangleSolid square_size square_size] ++ tileValue
       )
 
   drawRowIO :: Row -> Index -> Reader Float Picture
