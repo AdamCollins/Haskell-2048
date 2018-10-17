@@ -1,5 +1,6 @@
 module Main (main) where
   import Control.Monad.Reader
+  import Text.Read
   import Graphics.Gloss
   import Render
   import State
@@ -10,11 +11,21 @@ module Main (main) where
   -- Number of simulation steps to take for each second of real time
   simsteps = 1
 
+  getUserInput :: IO Float
+  getUserInput = do
+    putStrLn "Select your window size between 100 and 800"
+    windowSize <- getLine
+    case readMaybe windowSize :: Maybe Float of
+      Just x -> 
+        if x > 200 && x < 800
+          then return x 
+          else putStrLn "Your input number is not in the valid range" >> getUserInput
+      Nothing -> putStrLn "Invalid. Input must be a number" >> getUserInput
+
   main :: IO ()
   main = do
-    putStrLn "Select your window size: 300 = small, 450 = medium, 600 = big"
-    windowSize <- getLine
-    runReader playGame (read windowSize :: Float)
+    windowSize <- getUserInput
+    runReader playGame windowSize
 
   playGame :: Reader Float (IO ())
   playGame = do
