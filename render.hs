@@ -1,3 +1,6 @@
+-- The end of game images(cross/circle) are taken from this game:
+-- https://gist.github.com/gallais/0d61677fe97aa01a12d5
+
 module Render (windowIO, background, drawing, handleKeys) where
   import Control.Monad.Reader
   import Graphics.Gloss
@@ -70,20 +73,28 @@ module Render (windowIO, background, drawing, handleKeys) where
 
   doDrawing :: GameState -> Reader Float Picture
   doDrawing gameState = do
+    winsize <- ask
     drawRows <- sequence [drawRowIO row index | (row, index) <- zip (board gameState) [0..squares_per_row - 1]]
-    let gameOverDisplay = [drawGameOver | status gameState == Lose]
-    let winDisplay = [drawWin | status gameState == Win]
+    let gameOverDisplay = [drawGameOver winsize | status gameState == Lose]
+    let winDisplay = [drawWin winsize | status gameState == Win]
     return ( pictures $ drawRows ++ gameOverDisplay ++ winDisplay )
 
   drawing :: Float -> GameState -> Picture
   drawing winsize gameState = 
     runReader (doDrawing gameState) winsize 
 
-  drawGameOver :: Picture
-  drawGameOver = rectangleSolid 300 300
+  resize :: Float -> Path -> Path
+  resize k = fmap (\ (x, y) -> (x * k, y * k))
 
-  drawWin :: Picture
-  drawWin = Circle 200
+  drawGameOver :: Float -> Picture
+  drawGameOver winsize = color green $ translate 0 0 $ thickCircle (0.1 * k) (0.3 * k)
+                         where k = winsize / 1.25
+
+  drawWin :: Float -> Picture
+  drawWin winsize = color red $ translate 0 0 $ pictures $ fmap (polygon . resize (winsize / 1.6))
+   [ [ (-0.35, -0.25), (-0.25, -0.35), (0.35,0.25), (0.25, 0.35) ]
+   , [ (0.35, -0.25), (0.25, -0.35), (-0.35,0.25), (-0.25, 0.35) ]
+   ]
 
   
   handleKeys :: Event -> GameState -> GameState

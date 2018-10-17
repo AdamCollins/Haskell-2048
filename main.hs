@@ -34,4 +34,4 @@ module Main (main) where
   playGame = do
     window_size <- ask
     window <- windowIO
-    return ( play window background simsteps game2048 (drawing window_size) handleKeys (flip const) )
+    return ( play window background simsteps gameOverBoard (drawing window_size) handleKeys (flip const) )
