@@ -1,19 +1,23 @@
-import Graphics.Gloss
-import Board
-import Render
-import State
+module Main (main) where
+  import Control.Monad.Reader
+  import Graphics.Gloss
+  import Render
+  import State
 
-mainstatic :: IO ()
-mainstatic = display window background (drawing initialGame)
+  -- mainstatic :: IO ()
+  -- mainstatic = display window background (drawing initialGame)
 
--- Number of simulation steps to take for each second of real time
-simsteps = 1
+  -- Number of simulation steps to take for each second of real time
+  simsteps = 1
 
-main :: IO()
-main = play window background simsteps initialGame drawing handleKeys (flip const)
+  main :: IO ()
+  main = do
+    putStrLn "Select your window size: 300 = small, 450 = medium, 600 = big"
+    windowSize <- getLine
+    runReader playGame (read windowSize :: Float)
 
--- main :: t0 -> IO()
--- main gameState = play window background simsteps gs drawing handleKeys (flip const)
-
--- maininit :: IO()
--- maininit = main initialGame
+  playGame :: Reader Float (IO ())
+  playGame = do
+    window_size <- ask
+    window <- windowIO
+    return ( play window background simsteps initialGame (drawing window_size) handleKeys (flip const) )

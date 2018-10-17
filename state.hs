@@ -1,15 +1,12 @@
-module State (initialBoard, board2048, changedBoard, changedBoard2, gameOverBoard, winBoard,
-              initialGame, game2048, gameState1, gameState2, shiftUp, shiftDown, shiftLeft, shiftRight,
-              Board, Row, Tile, Index,
-              boardSize,
-              IsGameOver(..), GameState(..)
+module State (Board, Row, Tile, Index,
+              IsGameOver(..), GameState(..),
+              boardSize, shiftUp, shiftDown, shiftLeft, shiftRight,
+
+              initialBoard, board2048, changedBoard, changedBoard2, gameOverBoard, winBoard,
+              initialGame, game2048, gameState1, gameState2,
              ) where
 
-  import Board;
-  type Tile = Int
-  type Row = [Tile]
-  type Board = [Row]
-  type Index = Float
+  import Board
 
   data IsGameOver = InProgress | Win | Lose deriving (Eq)
   data GameState = GameState {
@@ -41,23 +38,25 @@ module State (initialBoard, board2048, changedBoard, changedBoard2, gameOverBoar
     status = InProgress
   }
 
+
   -- we may also need for the demo
   -- a one step away from gameover board
   -- a one step away from win board
   -- a full board with many merges
   -- a board where certain directions will not cause any merge
+
+  -- some boards
   initialBoard, board2048, changedBoard :: Board
   initialGame, game2048, gameState1 :: GameState
-
-  initialBoard = [[2, 0, 0, 0],
-                 [2, 2, 2, 0],
-                 [0, 0, 4, 0],
-                 [0, 0, 0, 0]]
 
   initialGame = GameState {
     board = initialBoard,
     status = InProgress
   }
+  initialBoard = [[2, 0, 0, 0],
+                 [2, 2, 2, 0],
+                 [0, 0, 4, 0],
+                 [0, 0, 0, 0]]
 
 
   game2048 = GameState {
