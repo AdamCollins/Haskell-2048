@@ -1,3 +1,6 @@
+-- The end of game images(cross/circle) are taken from this game:
+-- https://gist.github.com/gallais/0d61677fe97aa01a12d5
+
 module Render (windowIO, background, drawing, handleKeys) where
   import Control.Monad.Reader
   import Graphics.Gloss
@@ -7,6 +10,7 @@ module Render (windowIO, background, drawing, handleKeys) where
   squares_per_row = boardSize
   numof_edges = squares_per_row + 1
   square_to_edge_ratio = 7.6
+  scale_factor = 2600
 
   background :: Color
   background = makeColorI 187 173 160 255
@@ -26,14 +30,35 @@ module Render (windowIO, background, drawing, handleKeys) where
     edge_size <- edge_sizeIO
     return ( edge_size * square_to_edge_ratio )
 
+  posToLeft :: String -> Float
+  posToLeft tile = case move of
+                    4 -> 3.8
+                    3 -> 5
+                    2 -> 8
+                    1 -> 15
+                  where move = foldl (\acc x -> 1 + acc) 0 tile
+
+  tileValueIO :: Tile -> Reader Float [Picture]
+  tileValueIO tile = do
+    window_size <- ask
+    square_size <- square_sizeIO
+    let amount = window_size / scale_factor
+    let posx = posToLeft $ show tile
+    let tileValue = if tile == 0 
+                    then [] 
+                    else [translate (- square_size / posx) (- square_size / 10) $ 
+                          Scale amount amount $ color black $ text $ show tile]
+    return tileValue
+
   drawSquareIO :: Tile -> Index -> Reader Float Picture
   drawSquareIO tile index = do
     window_size <- ask
     edge_size <- edge_sizeIO
     square_size <- square_sizeIO
+    tileValue <- tileValueIO tile
     return (
       translate (-1/2 * window_size + edge_size * (index + 1) + square_size * index + 1/2 * square_size) 0 $ 
-      color (tileColor tile) $ rectangleSolid square_size square_size
+      color (tileColor tile) $ pictures $ [rectangleSolid square_size square_size] ++ tileValue
       )
 
   drawRowIO :: Row -> Index -> Reader Float Picture
@@ -48,20 +73,28 @@ module Render (windowIO, background, drawing, handleKeys) where
 
   doDrawing :: GameState -> Reader Float Picture
   doDrawing gameState = do
+    winsize <- ask
     drawRows <- sequence [drawRowIO row index | (row, index) <- zip (board gameState) [0..squares_per_row - 1]]
-    let gameOverDisplay = [drawGameOver | status gameState == Lose]
-    let winDisplay = [drawWin | status gameState == Win]
+    let gameOverDisplay = [drawGameOver winsize | status gameState == Lose]
+    let winDisplay = [drawWin winsize | status gameState == Win]
     return ( pictures $ drawRows ++ gameOverDisplay ++ winDisplay )
 
   drawing :: Float -> GameState -> Picture
   drawing winsize gameState = 
     runReader (doDrawing gameState) winsize 
 
-  drawGameOver :: Picture
-  drawGameOver = rectangleSolid 300 300
+  resize :: Float -> Path -> Path
+  resize k = fmap (\ (x, y) -> (x * k, y * k))
 
-  drawWin :: Picture
-  drawWin = Circle 200
+  drawGameOver :: Float -> Picture
+  drawGameOver winsize = color green $ translate 0 0 $ thickCircle (0.1 * k) (0.3 * k)
+                         where k = winsize / 1.25
+
+  drawWin :: Float -> Picture
+  drawWin winsize = color red $ translate 0 0 $ pictures $ fmap (polygon . resize (winsize / 1.6))
+   [ [ (-0.35, -0.25), (-0.25, -0.35), (0.35,0.25), (0.25, 0.35) ]
+   , [ (0.35, -0.25), (0.25, -0.35), (-0.35,0.25), (-0.25, 0.35) ]
+   ]
 
   
   handleKeys :: Event -> GameState -> GameState

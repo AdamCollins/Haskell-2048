@@ -27,8 +27,11 @@ module Main (main) where
     windowSize <- getUserInput
     runReader playGame windowSize
 
+  mainskip :: IO ()
+  mainskip = do runReader playGame 580
+
   playGame :: Reader Float (IO ())
   playGame = do
     window_size <- ask
     window <- windowIO
-    return ( play window background simsteps initialGame (drawing window_size) handleKeys (flip const) )
+    return ( play window background simsteps gameOverBoard (drawing window_size) handleKeys (flip const) )

@@ -61,7 +61,7 @@ module State (Board, Row, Tile, Index,
 
   game2048 = GameState {
     board = board2048,
-    status = InProgress
+    status = Win
   }
   board2048 =
     [[2048, 1024, 512, 128],
