@@ -1,9 +1,11 @@
-module Board (insertTile, rotate, shiftRows) where
+module Board (Board, Row, Tile, Index,
+              insertTile, rotate, shiftRows) where
     import System.IO
     import Data.List
     type Tile = Int
     type Row = [Tile]
     type Board = [[Tile]]
+    type Index = Float
 
 
 
