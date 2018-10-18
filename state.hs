@@ -2,8 +2,8 @@ module State (Board, Row, Tile, Index,
               IsGameOver(..), GameState(..),
               boardSize, shiftUp, shiftDown, shiftLeft, shiftRight,
 
-              initialBoard, board2048, changedBoard, changedBoard2, gameOverBoard, winBoard,
-              initialGame, game2048, gameState1, gameState2,
+              initialBoard, board1024,
+              initialGame, game1024
              ) where
 
   import Board
@@ -46,8 +46,8 @@ module State (Board, Row, Tile, Index,
   -- a board where certain directions will not cause any merge
 
   -- some boards
-  initialBoard, board2048, changedBoard :: Board
-  initialGame, game2048, gameState1 :: GameState
+  initialBoard, board1024 :: Board
+  initialGame, game1024 :: GameState
 
   initialGame = GameState {
     board = initialBoard,
@@ -59,48 +59,20 @@ module State (Board, Row, Tile, Index,
                  [0, 0, 0, 0]]
 
 
-  game2048 = GameState {
-    board = board2048,
+  -- one step from winning the game
+  game1024 = GameState {
+    board = board1024,
     status = InProgress
   }
-  board2048 =
-    [[2048, 1024, 512, 128],
+  board1024 =
+    [[1024, 1024, 512, 128],
      [64, 32, 16, 8],
      [4, 2, 0, 0],
      [0, 0, 0, 0]]
 
 
-  gameState1 = GameState {
-      board = changedBoard,
-      status = InProgress
-  }
-  changedBoard = 
-    [[2, 2, 2, 2],
-     [4, 4, 4, 4],
-     [0, 0, 0, 0],
-     [0, 0, 0, 0]]
-
-
-  gameState2 = GameState {
-      board = changedBoard2,
-      status = InProgress
-  }
-  changedBoard2 = 
-    [[0, 0, 0, 0],
-     [0, 0, 0, 0],
-     [64, 64, 64, 64],
-     [32, 32, 32, 32]]
-
-
-  gameOverBoard = GameState {
-      board = initialBoard,
-      status = Lose
-  }
-
-  winBoard = GameState {
-    board = board2048,
-    status = Win
-  }
+  -- TODO: one step from losing the game
+  --       add other gameStates
 
   boardSize :: Float
   boardSize = foldl (\acc x -> 1 + acc) 0 initialBoard
