@@ -86,12 +86,12 @@ module Render (windowIO, background, drawing, handleKeys) where
   resize :: Float -> Path -> Path
   resize k = fmap (\ (x, y) -> (x * k, y * k))
 
-  drawGameOver :: Float -> Picture
-  drawGameOver winsize = color green $ translate 0 0 $ thickCircle (0.1 * k) (0.3 * k)
+  drawWin :: Float -> Picture
+  drawWin winsize = color green $ translate 0 0 $ thickCircle (0.1 * k) (0.3 * k)
                          where k = winsize / 1.25
 
-  drawWin :: Float -> Picture
-  drawWin winsize = color red $ translate 0 0 $ pictures $ fmap (polygon . resize (winsize / 1.6))
+  drawGameOver :: Float -> Picture
+  drawGameOver winsize = color red $ translate 0 0 $ pictures $ fmap (polygon . resize (winsize / 1.6))
    [ [ (-0.35, -0.25), (-0.25, -0.35), (0.35,0.25), (0.25, 0.35) ]
    , [ (0.35, -0.25), (0.25, -0.35), (-0.35,0.25), (-0.25, 0.35) ]
    ]
@@ -103,7 +103,7 @@ module Render (windowIO, background, drawing, handleKeys) where
   handleKeys (EventKey (SpecialKey KeyUp) Down _ _) gs = shiftUp gs
   handleKeys (EventKey (SpecialKey KeyDown) Down _ _) gs = shiftDown gs
   -- a special key to test win/lose display; to be deleted
-  handleKeys (EventKey (Char 'a') Down _ _) s = winBoard
+  -- handleKeys (EventKey (Char 'a') Down _ _) s = winBoard
   handleKeys _ gs = gs
 
   tileColor :: Tile -> Color
