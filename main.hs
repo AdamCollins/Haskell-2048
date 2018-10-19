@@ -12,7 +12,7 @@ module Main (main) where
 
   getUserInput :: IO Float
   getUserInput = do
-    putStrLn "Select your window size between 100 and 800"
+    putStrLn "Select your window size between 200 and 800"
     windowSize <- getLine
     case readMaybe windowSize :: Maybe Float of
       Just x -> 
@@ -36,12 +36,12 @@ module Main (main) where
           else case command of
             "skip" -> runReader (playGame initialGame) default_window_size
             "win" -> runReader (playGame game1024) default_window_size
-            -- TODO: add other cases
+            "lose" -> runReader (playGame gameover) default_window_size
             "help" -> do 
               putStrLn "Command options:"
               putStrLn "-skip     skip the window size configs before playing"
               putStrLn "-win      load one step from win board"
-              -- TODO: add more
+              putStrLn "-lose     load one step from lose board"
             _ -> putStrLn "command not found, try again"
 
   playGame :: GameState -> Reader Float (IO ())

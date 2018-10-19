@@ -2,8 +2,8 @@ module State (Board, Row, Tile, Index,
               IsGameOver(..), GameState(..),
               boardSize, shiftUp, shiftDown, shiftLeft, shiftRight,
 
-              initialBoard, board1024,
-              initialGame, game1024
+              initialBoard, board1024, gameOverboard,
+              initialGame, game1024, gameover
              ) where
 
   import Board
@@ -77,9 +77,16 @@ module State (Board, Row, Tile, Index,
      [4, 2, 0, 0],
      [0, 0, 0, 0]]
 
-
-  -- TODO: one step from losing the game
-  --       add other gameStates
+  -- one step from losing the game
+  gameover = GameState {
+    board = gameOverboard,
+    status = InProgress
+  }
+  gameOverboard = 
+    [[2, 4, 2, 4],
+     [8, 16, 8, 16],
+     [16, 8, 16, 8],
+     [2, 4, 2, 2]]
 
   boardSize :: Float
   boardSize = foldl (\acc x -> 1 + acc) 0 initialBoard
