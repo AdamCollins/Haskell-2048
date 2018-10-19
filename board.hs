@@ -5,15 +5,15 @@ module Board (insertTile, rotate, shiftRows, hasWon, hasLost) where
     type Tile = Int
     type Row = [Tile]
     type Board = [[Tile]]
-
-
-    initialBoard:: Board
-    initialBoard = [[0, 0, 0, 0],
-                 [0, 0, 0, 0],
-                 [0, 0, 0, 0],
+    type Index = Float
+    seed = randomIO :: IO Int
+  
+    initialBoard :: Board
+    initialBoard = [[2, 0, 0, 0],
+                 [2, 2, 2, 0],
+                 [0, 0, 4, 0],
                  [0, 0, 0, 0]]
 
-    seed = randomIO :: IO Int
      -- Inserts a new tile into the board at an 0 location
     insertTile :: Board -> Board
     insertTile [[]] = [[]]
@@ -70,11 +70,9 @@ module Board (insertTile, rotate, shiftRows, hasWon, hasLost) where
     --Returns true if the game has been lost
     hasLost :: Board -> Bool
     hasLost board
-                | board/=(shiftRows "left" board) = True
-                | board/=(shiftRows "right" board) = True
-                | board/=(shiftRows "up" board) = True
-                | board/=(shiftRows "down" board) = True
+                | shiftable = True
                 | otherwise = False
+                where shiftable = (board==(shiftRows "down" board) && board==(shiftRows "up" board) && board==(shiftRows "left" board) && board==(shiftRows "right" board))
 
     --Prints Board in the console
     printBoard :: Show a => [a] -> IO ()
