@@ -8,6 +8,12 @@ module Board (Board, Row, Tile, Index,
     type Index = Float
 
 
+    initialBoard:: Board
+    initialBoard = [[0, 0, 0, 0],
+                 [0, 0, 0, 0],
+                 [0, 2, 0, 0],
+                 [4, 4, 0, 0]]
+
 
      -- Inserts a new tile into the board at an 0 location
     insertTile :: Board -> Board
@@ -33,15 +39,14 @@ module Board (Board, Row, Tile, Index,
     
     isRowEmpty :: Row -> Bool 
     isRowEmpty (h:t) = foldr (\ h b -> h==0&&b) True (h:t) 
-
-    sumRows r1 r2 = zipWith (+) r1 r2
+    sumRows r1 r2 = ((zipWith (\ a b -> if (a==b || a*b==0) then a+b else b) r1 r2), (zipWith (\ a b -> if (a==b ||a*b==0) then 0 else a) r1 r2))
     --Returns true if the two rows can be added together legally
     rowsCanMerge :: Row->Row->Bool
     rowsCanMerge [] _ = True
     rowsCanMerge _ [] = True
     rowsCanMerge (e1:r1) (e2:r2) 
-                            | (e1==e2 || e1==0 || e2==0) = rowsCanMerge r1 r2
-                            | otherwise = False
+                            | (e1/=e2 || e1/=0 || e2/=0) = True
+                            | otherwise = rowsCanMerge r1 r2
     
     shiftRows :: [Char]->Board->Board 
     shiftRows dir board = insertTile $ rotate (flipdir dir) $ shiftRowDown (rotate dir board)
@@ -51,10 +56,10 @@ module Board (Board, Row, Tile, Index,
     shiftRowDown [] = []
     shiftRowDown (row : board)
                             | length board == 0 = [row]
-                            | rowsCanMerge row (board!!0) = emptyRow:(shiftRowDown (mergedRow:boardEnd)) -- [0,0,0] : ([r1.a+r2.a, r1.b+r2.b...] :[r3])
+                            | rowsCanMerge row (board!!0) = (snd mergedRows):(shiftRowDown ((fst mergedRows):boardEnd)) -- [0,0,0] : ([r1.a+r2.a, r1.b+r2.b...] :[r3])
                             | otherwise = row : shiftRowDown board
                             where emptyRow = [0,0,0,0]
-                                  mergedRow = sumRows row (board!!0)
+                                  mergedRows = sumRows row (board!!0)
                                   boardEnd = drop 1 board
 
 
