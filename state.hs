@@ -7,8 +7,11 @@ module State (Board, Row, Tile, Index,
              ) where
 
   import Board
-
-  data IsGameOver = InProgress | Win | Lose deriving (Eq)
+  type Tile = Int
+  type Row = [Tile]
+  type Board = [[Tile]]
+  type Index = Float
+  data IsGameOver = InProgress | Win | Lose deriving (Eq, Show)
   data GameState = GameState {
     board :: Board,
     status :: IsGameOver
@@ -16,28 +19,32 @@ module State (Board, Row, Tile, Index,
 
   shiftUp :: GameState -> GameState
   shiftUp gs = GameState {
-    board = shiftRows "up" (board gs),
-    status = InProgress
+    board =  shiftRows "up" (board gs),
+    status = getStatus $ shiftRows "up" (board gs)
   }
     
   shiftDown :: GameState -> GameState
   shiftDown gs = GameState {
     board = shiftRows "down" (board gs),
-    status = InProgress
+    status = getStatus $ shiftRows "down" (board gs)
   }
 
   shiftLeft :: GameState -> GameState
   shiftLeft gs = GameState {
     board = shiftRows "left" (board gs),
-    status = InProgress
+    status = getStatus $ shiftRows "left" (board gs)
   }
 
   shiftRight :: GameState -> GameState
   shiftRight gs = GameState {
     board = shiftRows "right" (board gs),
-    status = InProgress
+    status = getStatus $ shiftRows "right" (board gs)
   }
 
+  getStatus board
+               | hasWon board = Win
+               | hasLost board = Lose
+               | otherwise = InProgress
 
   -- we may also need for the demo
   -- a one step away from gameover board

@@ -16,7 +16,7 @@ module Main (main) where
     windowSize <- getLine
     case readMaybe windowSize :: Maybe Float of
       Just x -> 
-        if x > 200 && x < 800
+        if x >= 200 && x <= 800
           then return x 
           else putStrLn "Your input number is not in the valid range" >> getUserInput
       Nothing -> putStrLn "Invalid. Input must be a number" >> getUserInput
