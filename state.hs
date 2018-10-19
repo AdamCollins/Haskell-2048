@@ -47,10 +47,10 @@ module State (initialBoard, board2048, changedBoard, changedBoard2, gameOverBoar
   initialBoard, board2048, changedBoard :: Board
   initialGame, game2048, gameState1 :: GameState
 
-  initialBoard = [[2, 0, 0, 0],
-                 [2, 2, 2, 0],
-                 [0, 0, 4, 0],
-                 [0, 0, 0, 0]]
+  initialBoard = [[0, 0, 0, 0],
+                 [0, 0, 0, 0],
+                 [2, 2, 0, 0],
+                 [2, 4, 0, 0]]
 
   initialGame = GameState {
     board = initialBoard,
