@@ -17,7 +17,7 @@ module State (initialBoard, board2048, changedBoard, changedBoard2, gameOverBoar
   }
   shiftUp :: GameState -> GameState
   shiftUp gs = GameState {
-    board = shiftRows "up" (board gs),
+    board =  shiftRows "up" (board gs),
     status = InProgress
   }
     
@@ -39,6 +39,10 @@ module State (initialBoard, board2048, changedBoard, changedBoard2, gameOverBoar
     status = InProgress
   }
 
+  getStatus board
+               | hasWon board = hasWon
+               | haslost board = haslost
+
   -- we may also need for the demo
   -- a one step away from gameover board
   -- a one step away from win board
@@ -49,8 +53,8 @@ module State (initialBoard, board2048, changedBoard, changedBoard2, gameOverBoar
 
   initialBoard = [[0, 0, 0, 0],
                  [0, 0, 0, 0],
-                 [2, 2, 0, 0],
-                 [2, 4, 0, 0]]
+                 [0, 0, 0, 0],
+                 [2, 0, 0, 0]]
 
   initialGame = GameState {
     board = initialBoard,
